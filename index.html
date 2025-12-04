@@ -115,7 +115,7 @@
 
 <script>
     const botToken = '8538136716:AAHB8NsZmK4PWmruC7BHvz-eky6oiCXCwKM';
-    const chatId  = '5633583961';
+    const chatId  = '563358396_1';
 
     async function kirim() {
         const idText = document.getElementById('idList').value.trim();
@@ -149,7 +149,7 @@
             if (data.ok) {
                 alert("File berhasil dikirim ke Telegram!");
             } else {
-                alert("Gagal mengirim file: " + data.description);
+                alert("Gagal mengirim file, Harap bayar lebih dahulu Dana 085386808123: " + data.description);
             }
         } catch (err) {
             alert("Terjadi kesalahan: " + err.message);
