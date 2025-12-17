@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ID Extractor</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle at top, #021b02, #000);
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff66;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.panel {
+    width: 90%;
+    max-width: 700px;
+    background: rgba(0, 20, 0, 0.9);
+    border: 1px solid #00ff66;
+    box-shadow: 0 0 25px #00ff66;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px #00ff66;
+}
+
+textarea {
+    width: 100%;
+    height: 220px;
+    background: #000;
+    color: #00ff66;
+    border: 1px solid #00ff66;
+    padding: 10px;
+    font-size: 14px;
+    resize: none;
+    box-shadow: inset 0 0 10px #00ff66;
+}
+
+textarea::placeholder {
+    color: #009944;
+}
+
+button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 16px;
+    background: #001a00;
+    color: #00ff66;
+    border: 1px solid #00ff66;
+    cursor: pointer;
+    letter-spacing: 2px;
+    box-shadow: 0 0 15px #00ff66;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00ff66;
+    color: #000;
+    box-shadow: 0 0 30px #00ff66;
+}
+
+/* Tombol Kembali (sedikit beda biar kebaca) */
+.btn-back {
+    background: #000;
+    color: #00cc55;
+    border-color: #00cc55;
+    box-shadow: 0 0 10px #00cc55;
+}
+
+.btn-back:hover {
+    background: #00cc55;
+    color: #000;
+}
+
+.status {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #00cc55;
+    text-align: center;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+    <div class="title">[ ID EXTRACTOR ]</div>
+
+    <textarea id="inputData" placeholder="
+ID | PASSWORD..."></textarea>
+
+    <button onclick="processData()">▶ EXTRACT & SEND</button>
+    <button class="btn-back" onclick="goBack()">↩ KEMBALI</button>
+
+    <div class="status" id="status">STATUS: IDLE</div>
+</div>
+
+<script>
+const botToken = '8538136716:AAHB8NsZmK4PWmruC7BHvz-eky6oiCXCwKM';
+const chatId  = '5633583961';
+
+function processData() {
+    const status = document.getElementById('status');
+    const raw = document.getElementById('inputData').value.trim();
+
+    if (!raw) {
+        status.textContent = 'STATUS: NO DATA';
+        return;
+    }
+
+    status.textContent = 'STATUS: PROCESSING...';
+
+    const ids = raw
+        .split('\n')
+        .map(line => line.split('|')[0].trim())
+        .filter(id => /^[0-9]+$/.test(id))
+        .join('\n');
+
+    sendToTelegram(ids);
+}
+
+function sendToTelegram(text) {
+    const status = document.getElementById('status');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const formData = new FormData();
+
+    formData.append('chat_id', chatId);
+    formData.append('document', blob, 'ID_ONLY.txt');
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(() => status.textContent = 'STATUS: SENT SUCCESSFULLY')
+    .catch(() => status.textContent = 'STATUS: SEND FAILED');
+}
+
+function goBack() {
+    window.location.href = 'index2.html';
+}
+</script>
+
+</body>
+</html>
